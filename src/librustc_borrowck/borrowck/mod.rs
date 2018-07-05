@@ -36,6 +36,7 @@ use rustc::middle::mem_categorization::Categorization;
 use rustc::middle::mem_categorization::ImmutabilityBlame;
 use rustc::middle::region;
 use rustc::middle::free_region::RegionRelations;
+use rustc::session::config::BorrowckMode;
 use rustc::ty::{self, Ty, TyCtxt};
 use rustc::ty::query::Providers;
 use rustc_mir::util::borrowck_errors::{BorrowckErrors, Origin};
@@ -89,6 +90,8 @@ pub struct AnalysisData<'a, 'tcx: 'a> {
 fn borrowck<'a, 'tcx>(tcx: TyCtxt<'a, 'tcx, 'tcx>, owner_def_id: DefId)
     -> Lrc<BorrowCheckResult>
 {
+    assert!(tcx.borrowck_mode() != BorrowckMode::Mir);
+
     debug!("borrowck(body_owner_def_id={:?})", owner_def_id);
 
     let owner_id = tcx.hir.as_local_node_id(owner_def_id).unwrap();
